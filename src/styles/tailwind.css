@@ -1,0 +1,16 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+button {
+    -webkit-appearance: button; /* Chrome, Safari, Opera */
+    -moz-appearance: button; /* Firefox */
+    appearance: auto; /* Standard syntax */
+  }
+
+[type='search'] {
+    -webkit-appearance: textfield; /* Chrome, Safari, Opera */
+    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield; /* Standard syntax */
+    outline-offset: -2px;
+}
