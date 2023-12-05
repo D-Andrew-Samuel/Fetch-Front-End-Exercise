@@ -73,7 +73,7 @@ export const getBreeds = async (): Promise<string[]> => {
     }
 
     const data = await response.json();
-    return data; // Adjust this line based on the actual structure of your API response
+    return data;
   } catch (error) {
     console.error("Fetch breeds error:", error);
     throw new Error("Unable to fetch breeds");
