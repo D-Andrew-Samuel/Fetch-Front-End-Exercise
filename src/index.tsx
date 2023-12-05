@@ -9,12 +9,14 @@ import { login } from './api';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track if the user is logged in
   const [loginError, setLoginError] = useState('');
+  const [userName, setUserName] = useState(''); // State to track the user name
 
   const handleLogin = async (name: string, email: string) => {
     try {
       const response = await login(name, email);
       console.log('Login successful', response);
       setIsLoggedIn(true); // Set the login state to true on successful login
+      setUserName(name); // Set the user name
       setLoginError('');
     } catch (error) {
       console.error('Login error:', error);
@@ -26,17 +28,20 @@ const App = () => {
     }
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserName('');
+};
   return (
 <div>
-  <h1 className="text-6xl font-extrabold text-center bg-custom-orange pt-10">WELCOME TO FETCH DOG ADOPTION</h1>
-  <h2 className="text-2xl font-thin text-center bg-custom-orange pb-5">Frontend Take-Home Exercise</h2>
+  <h1 className="text-6xl font-extrabold text-center bg-custom-orange pt-10 pb-10">WELCOME TO placeholder DOG ADOPTION</h1>
   {!isLoggedIn ? (
     <>
       <Login onLogin={handleLogin} />
       {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
     </>
   ) : (
-    <DogSearch /> // Render DogSearch component when logged in
+    <DogSearch handleLogout = {handleLogout} userName={userName} /> // Render DogSearch component when logged in
   )}
 </div>
   );

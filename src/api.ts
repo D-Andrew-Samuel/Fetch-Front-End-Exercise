@@ -1,6 +1,6 @@
 const API_BASE_URL = 'https://frontend-take-home-service.fetch.com';
 
-import axios from 'axios';
+
 
 // Exporting the Dog interface
 export interface Dog {
@@ -9,13 +9,16 @@ export interface Dog {
   name: string;
   age: number;
   zip_code: string;
+  city: string;
   breed: string;
 }
+
+
 
 // Exporting the SearchParams interface
 export interface SearchParams {
   breeds?: string[];
-  zipCodes?: string[];
+  city?: string[];
   ageMin?: number;
   ageMax?: number;
   size?: number;
@@ -57,30 +60,58 @@ export const login = async (name: string, email: string): Promise<string> => {
 // Function to get all available breeds
 export const getBreeds = async (): Promise<string[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/breeds`, {
-      withCredentials: true,
+    const response = await fetch(`${API_BASE_URL}/dogs/breeds`, {
+      method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    if (response.status !== 200) {
+    if (!response.ok) {
       throw new Error(`Fetching breeds failed with status: ${response.status} and message: ${response.statusText}`);
     }
 
-    return response.data; // Adjust this line based on the actual structure of your API response
+    const data = await response.json();
+    return data; // Adjust this line based on the actual structure of your API response
   } catch (error) {
     console.error("Fetch breeds error:", error);
     throw new Error("Unable to fetch breeds");
   }
 };
 
+// Function to get all available cities
+export const getCities = async (): Promise<string[]> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/locations/search`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Fetching cities failed with status: ${response.status} and message: ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data.results.map((location: { city: string }) => location.city);
+  } catch (error) {
+    console.error("Fetch cities error:", error);
+    throw new Error("Unable to fetch cities");
+  }
+};
+
+
 // Function to search for dogs based on various parameters
 export const searchDogs = async (params: SearchParams): Promise<Dog[]> => {
   const queryParams = new URLSearchParams();
 
   if (params.breeds && params.breeds.length) queryParams.append('breeds', params.breeds.join(','));
-  if (params.zipCodes && params.zipCodes.length) queryParams.append('zipCodes', params.zipCodes.join(','));
+  if (params.city && params.city.length) queryParams.append('city', params.city.join(','));
   // Append other parameters similarly
   if (params.ageMin !== undefined) queryParams.append('ageMin', params.ageMin.toString());
   if (params.ageMax !== undefined) queryParams.append('ageMax', params.ageMax.toString());
@@ -112,27 +143,39 @@ export const searchDogs = async (params: SearchParams): Promise<Dog[]> => {
 
 // New function to fetch dogs by IDs
 export const fetchDogsByIds = async (dogIds: string[]): Promise<Dog[]> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/dogs`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dogIds),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Fetching dogs failed with status: ${response.status} and message: ${errorText}`);
-    }
-
-    const data = await response.json();
-    return data; // Adjust this line based on the actual structure of your API response
-  } catch (error) {
-    console.error("Fetch dogs error:", error);
-    throw new Error("Unable to fetch dogs");
+  const chunkSize = 50;
+  const dogIdChunks = [];
+  for (let i = 0; i < dogIds.length; i += chunkSize) {
+    dogIdChunks.push(dogIds.slice(i, i + chunkSize));
   }
+
+  const dogs = [];
+  for (const dogIdChunk of dogIdChunks) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/dogs`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dogIdChunk),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Fetching dogs failed with status: ${response.status} and message: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log(data)
+      dogs.push(...data);
+    } catch (error) {
+      console.error("Fetch dogs error:", error);
+      throw new Error("Unable to fetch dogs");
+    }
+  }
+
+  return dogs;
 };
 
 // New function to match with a dog
@@ -161,7 +204,7 @@ export const matchWithDog = async (dogIds: string[]): Promise<{ match: string }>
 };
   
 // Define the type for searchCriteria and the return type of the function
-async function searchLocationsWithCriteria(searchCriteria: any): Promise<{ results: Location[], total: number }> {
+export async function searchLocationsWithCriteria(searchCriteria: any): Promise<{ results: Location[], total: number }> {
   try {
     const response = await fetch(`${API_BASE_URL}/locations/search`, {
       method: 'POST',

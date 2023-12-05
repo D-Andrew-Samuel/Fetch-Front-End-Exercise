@@ -16,13 +16,22 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       setError('Please enter both name and email');
       return;
     }
+    if (name.includes('<') || name.includes('>') || name.includes(';') || name.includes(':') || email.includes('<') || email.includes('>')) {
+      setError('Invalid input. Please enter a valid name and email.');
+      return;
+    }
     setError('');
     onLogin(name, email);
   };
 
+  React.useEffect(() => {
+    console.log(error);
+  }, [error]);
+
   return (
     <div className="flex items-center justify-center h-screen bg-slate-500">
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      {error && <div className="error">{error}</div>}
         <div className="mb-4">
           <label className="block text-custom-orange text-sm font-sm font-bold mb-2" htmlFor="name">
             Name:
@@ -57,7 +66,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     >
       Login
     </button>
-  </div>
+    <p className="help-text text-sm italic font-thin text-center mx-auto md:w-1/2">For any issues, please contact support at 608.695.6266 or donovon.andrew.samuel@gmail.com</p>  </div>
   {error && <p className="text-red-500 text-xs italic mt-2 md:mt-0">{error}</p>}
 </div>
       </form>
