@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    "types": ["node"],
     "jsx": "react-jsx"
   },
-  "include": ["src", "tailwind.config.js", "styles.d.ts"]
+  "include": ["src", "tailwind.config.js", "styles.d.ts", "node_modules"]
 }

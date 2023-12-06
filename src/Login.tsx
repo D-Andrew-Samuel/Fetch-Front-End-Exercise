@@ -24,10 +24,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     onLogin(name, email);
   };
 
-  React.useEffect(() => {
-    console.log(error);
-  }, [error]);
-
   return (
     <div className="flex items-center justify-center h-screen bg-slate-500">
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">

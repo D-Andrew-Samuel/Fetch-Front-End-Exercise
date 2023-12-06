@@ -2,7 +2,7 @@ const API_BASE_URL = 'https://frontend-take-home-service.fetch.com';
 
 
 
-// Exporting the Dog interface
+
 export interface Dog {
   id: string;
   img: string;
@@ -15,7 +15,7 @@ export interface Dog {
 
 
 
-// Exporting the SearchParams interface
+
 export interface SearchParams {
   breeds?: string[];
   city?: string[];
@@ -26,12 +26,12 @@ export interface SearchParams {
   sort?: string;
 }
 
-// Function for user login
+
 export const login = async (name: string, email: string): Promise<string> => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      credentials: 'include',  // Ensures cookies are sent with the request
+      credentials: 'include',  
       headers: {
         'Content-Type': 'application/json',
       },
@@ -57,7 +57,6 @@ export const login = async (name: string, email: string): Promise<string> => {
   }
 };
 
-// Function to get all available breeds
 export const getBreeds = async (): Promise<string[]> => {
   try {
     const response = await fetch(`${API_BASE_URL}/dogs/breeds`, {
@@ -80,7 +79,7 @@ export const getBreeds = async (): Promise<string[]> => {
   }
 };
 
-// Function to get all available cities
+
 export const getCities = async (): Promise<string[]> => {
   try {
     const response = await fetch(`${API_BASE_URL}/locations/search`, {
@@ -106,13 +105,12 @@ export const getCities = async (): Promise<string[]> => {
 };
 
 
-// Function to search for dogs based on various parameters
+
 export const searchDogs = async (params: SearchParams): Promise<Dog[]> => {
   const queryParams = new URLSearchParams();
 
   if (params.breeds && params.breeds.length) queryParams.append('breeds', params.breeds.join(','));
   if (params.city && params.city.length) queryParams.append('city', params.city.join(','));
-  // Append other parameters similarly
   if (params.ageMin !== undefined) queryParams.append('ageMin', params.ageMin.toString());
   if (params.ageMax !== undefined) queryParams.append('ageMax', params.ageMax.toString());
   if (params.size !== undefined) queryParams.append('size', params.size.toString());
@@ -141,9 +139,9 @@ export const searchDogs = async (params: SearchParams): Promise<Dog[]> => {
   }
 };
 
-// New function to fetch dogs by IDs
+
 export const fetchDogsByIds = async (dogIds: string[]): Promise<Dog[]> => {
-  const chunkSize = 50;
+  const chunkSize = 100;
   const dogIdChunks = [];
   for (let i = 0; i < dogIds.length; i += chunkSize) {
     dogIdChunks.push(dogIds.slice(i, i + chunkSize));
@@ -178,7 +176,7 @@ export const fetchDogsByIds = async (dogIds: string[]): Promise<Dog[]> => {
   return dogs;
 };
 
-// New function to match with a dog
+
 export const matchWithDog = async (dogIds: string[]): Promise<{ match: string }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/dogs/match`, {
@@ -196,14 +194,14 @@ export const matchWithDog = async (dogIds: string[]): Promise<{ match: string }>
     }
 
     const data = await response.json();
-    return data; // Adjust this line based on the actual structure of your API response
+    return data; 
   } catch (error) {
     console.error("Matching with a dog error:", error);
     throw new Error("Unable to match with a dog");
   }
 };
   
-// Define the type for searchCriteria and the return type of the function
+
 export async function searchLocationsWithCriteria(searchCriteria: any): Promise<{ results: Location[], total: number }> {
   try {
     const response = await fetch(`${API_BASE_URL}/locations/search`, {

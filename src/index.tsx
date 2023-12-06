@@ -34,8 +34,10 @@ const App = () => {
 };
   return (
 <div>
-  <h1 className="text-6xl font-extrabold text-center bg-custom-orange pt-10 pb-10">WELCOME TO placeholder DOG ADOPTION</h1>
-  {!isLoggedIn ? (
+<h1 className="text-2xl sm:text-4xl md:text-6xl font-extrabold text-center bg-custom-orange pt-10 pb-10">
+    WELCOME TO placeholder DOG ADOPTION
+</h1> 
+ {!isLoggedIn ? (
     <>
       <Login onLogin={handleLogin} />
       {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
@@ -62,3 +64,5 @@ if (!container) {
 
 const root = createRoot(container);
 root.render(<AppWithCallbackAfterRender />);
+
+export default App;

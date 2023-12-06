@@ -19,10 +19,47 @@ const DogSearch: React.FC<DogSearchProps> = ({handleLogout, userName}) => {
     const [size, setSize] = useState<number | undefined>(25);    
     const [sort, setSort] = useState('breed-asc');
     const [dogs, setDogs] = useState<Dog[]>([]);
-    const [match, setMatch] = useState<{ match: string } | null>(null);
+    const [match, setMatch] = useState<string | null>(null);
+    const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
     const [searchError, setSearchError] = useState('');
+    const [favorites, setFavorites] = useState<string[]>([]);
+    const [showFavorites, setShowFavorites] = useState(false);
+    const [showMatchModal, setShowMatchModal] = useState(false);
 
 const [currentPage, setCurrentPage] = useState(0);
+
+const handleFavorite = (dogId: string, checked: boolean) => {
+    if (checked && !favorites.includes(dogId)) {
+        setFavorites([...favorites, dogId]);
+    } else if (!checked && favorites.includes(dogId)) {
+        setFavorites(favorites.filter(id => id !== dogId));
+    }
+};
+
+const handleGenerateMatch = async () => {
+    try {
+        const matchResponse = await matchWithDog(favorites);
+        const matchDetails = await fetchDogsByIds([matchResponse.match]);
+        setMatch(matchDetails[0].id);
+        setShowMatchModal(true);
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+useEffect(() => {
+    const fetchMatchedDog = async () => {
+        if (match) {
+            const dog = await fetchDogsByIds([match]);
+            setMatchedDog(dog[0]);
+        } else {
+            setMatchedDog(null);
+        }
+    };
+
+    fetchMatchedDog();
+}, [match]);
+
 
 const handleAgeMinChange = (value: number | undefined) => {
     if (value !== undefined && ageMax !== undefined && value > ageMax) {
@@ -120,7 +157,6 @@ const [cities, setCities] = useState<string[]>([]);
                     break;
             }
             setDogs(dogDetails);
-            setMatch(match);
             setSearchError('');
             setCurrentPage(0);
         } catch (error) {
@@ -212,21 +248,32 @@ return (
     <button type="submit" className="p-4 bg-orange-500 text-white rounded hover:bg-orange-600">Search</button>
     <button type="button" className="p-4 bg-orange-500 text-white rounded hover:bg-orange-600" onClick={handleReset}>Reset</button>
 </div>
+<div className="mt-4 flex justify-center">
+    <button type="button" className="p-4 bg-green-500 text-white rounded hover:bg-green-600" onClick={handleGenerateMatch}>Generate Match!</button>
+</div>
 </div>
         </form>
             {searchError && <p className="text-red-500 mt-2">{searchError}</p>}
         <div className="mt-4 space-y-2">
      
         {dogsOnCurrentPage.map(dog => {
-            console.log(`Zip Code for ${dog.name}:`, dog.zip_code);
             return (
             <div key={dog.id} className="max-w-xl mx-auto p-4 border border-gray-300 rounded bg-white text-center">
                 <p className="font-bold">{dog.name}</p>
                 <p>{dog.breed} | Age {dog.age}</p>
                 <p>Zip Code: {dog.zip_code} </p>
                 <div className="flex justify-center">
-        <img src={dog.img} alt={dog.name} className="w-64 h-64 object-cover transition-transform duration-200 ease-in hover:scale-110" />
-      </div>
+        <img src={dog.img} alt={dog.name} className="w-64 h-64 object-cover" />
+                </div>
+                <div className="flex justify-center items-center mt-4">
+                    <input
+                        type="checkbox"
+                        id={`favorite-${dog.id}`}
+                        checked={favorites.includes(dog.id)}
+                        onChange={(e) => handleFavorite(dog.id, e.target.checked)}
+                    />
+                    <label htmlFor={`favorite-${dog.id}`} className="ml-2">Add to Favorites</label>
+                    </div>
             </div>
             );
             })}
@@ -252,9 +299,40 @@ return (
         </>
     )}
 </div>
-            </div>
-        )
 
-};         
+{showMatchModal && matchedDog && (
+    <div className="fixed inset-0 flex items-center justify-center z-10">
+        <div className="fixed inset-0 bg-black opacity-50 z-10"></div>
+        <div className="bg-white p-4 rounded shadow-lg max-w-md mx-auto z-20">
+            <button onClick={() => setShowMatchModal(false)}>X</button>
+            <p className="text-xl font-bold">Your Match!</p>
+            <p className="font-bold">{matchedDog.name}</p>
+            <p>{matchedDog.breed} | Age {matchedDog.age}</p>
+            <p>Zip Code: {matchedDog.zip_code} </p>
+            <div className="flex justify-center">
+                <img src={matchedDog.img} alt={matchedDog.name} className="w-64 h-64 object-cover" />
+            </div>
+        </div>
+    </div>
+)}
+
+{showMatchModal && matchedDog && (
+    <div className="fixed inset-0 flex items-center justify-center z-10">
+        <div className="fixed inset-0 bg-black opacity-50 z-10"></div>
+        <div className="bg-white p-4 rounded shadow-lg max-w-md mx-auto z-20">
+            <button onClick={() => setShowMatchModal(false)}>X</button>
+            <p className="text-xl font-bold">Your Match!</p>
+            <p className="font-bold">{matchedDog.name}</p>
+            <p>{matchedDog.breed} | Age {matchedDog.age}</p>
+            <p>Zip Code: {matchedDog.zip_code} </p>
+            <div className="flex justify-center">
+                <img src={matchedDog.img} alt={matchedDog.name} className="w-64 h-64 object-cover" />
+            </div>
+        </div>
+    </div>
+)}
+
+    </div> 
+)};         
 
 export default DogSearch;
