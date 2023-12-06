@@ -1,0 +1,46 @@
+Background: 
+
+This app allows users to log in with their name and an email address.
+Upon logging in, users will see a form to specify search criteria to generate a list of dogs available for adoption.
+The user can add dogs to favorite via a checkbox on the rendered results, and generate a singular match by clicking the Generate Match button.
+
+TESTING INSTRUCTIONS:
+
+///////////////////
+
+--Log In--
+*Input required in the Name and Email fields
+
+*Log In button directs user to the dog search page
+
+*Pressing enter will submit the form
+
+*Name used for log in will be rendered on the dog search page
+
+*Valid email format is required
+
+*Injections (HTML, JS) will not pass in the name nor email field
+
+
+///////////////////
+
+
+--Dog Search--
+*The fields are category select
+
+*Pagination will render as necessary, with 5 results per page
+
+*The Min/Max fields cannot be contradictory
+
+*A checkbox to add a dog to favorites will render on each results
+
+*Pressing the search button will execute a search upon the criteria
+
+*Pressing the reset button will revert the search to an empty state
+
+*Pressing the generate match button will throw a modal popup with an individual dog matched to the user
+
+*Favorited dogs will remain favorited until the user unchecks the box
+
+*A button to log out will send the user back to the log in form
+
