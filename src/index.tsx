@@ -3,20 +3,20 @@ import { useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles/tailwind.css';
 import Login from './Login';
-import DogSearch from './DogSearch'; // Import the DogSearch component
+import DogSearch from './DogSearch'; 
 import { login } from './api';
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track if the user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [loginError, setLoginError] = useState('');
-  const [userName, setUserName] = useState(''); // State to track the user name
+  const [userName, setUserName] = useState(''); 
 
   const handleLogin = async (name: string, email: string) => {
     try {
       const response = await login(name, email);
       console.log('Login successful', response);
-      setIsLoggedIn(true); // Set the login state to true on successful login
-      setUserName(name); // Set the user name
+      setIsLoggedIn(true); 
+      setUserName(name); 
       setLoginError('');
     } catch (error) {
       console.error('Login error:', error);
@@ -43,7 +43,7 @@ const App = () => {
       {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
     </>
   ) : (
-    <DogSearch handleLogout = {handleLogout} userName={userName} /> // Render DogSearch component when logged in
+    <DogSearch handleLogout = {handleLogout} userName={userName} /> 
   )}
 </div>
   );
