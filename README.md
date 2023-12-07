@@ -10,6 +10,8 @@ Before you begin, ensure you have met the following requirements:
 * You have installed the latest version of [Node.js and npm](https://nodejs.org/en/download/).
 * You have a Windows/Linux/Mac machine.
 
+Additional steps may be required. Your browser's cookie settings may prevent the app from functioning. Try allowing cross-site tracking in your browser settings, allow third party cookies and disable content blockers; or more generally set the browser to lower security settings. 
+
 ## Installing Fetch-Front-End-Exercise
 
 To install Fetch-Front-End-Exercise, follow these steps (I make these commands in a bash terminal):
